@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -27,14 +27,14 @@
 
     // Initial positions and directions of players
     let player1 = {
-        x: 50,
+        x: 100,
         y: canvas.height / 2,
         direction: 'right',
         trail: [],
         color: 'blue'
     };
     let player2 = {
-        x: canvas.width - 50,
+        x: canvas.width - 100,
         y: canvas.height / 2,
         direction: 'left',
         trail: [],
@@ -76,20 +76,16 @@
     function checkCollisions() {
         // Check collisions with walls
         if (player1.x <= 0 || player1.x >= canvas.width || player1.y <= 0 || player1.y >= canvas.height) {
-            // Handle collision for player 1
             endGame();
         }
         if (player2.x <= 0 || player2.x >= canvas.width || player2.y <= 0 || player2.y >= canvas.height) {
-            // Handle collision for player 2
             endGame();
         }
         // Check collisions with trails
         if (checkTrailCollision(player1)) {
-            // Handle collision for player 1
             endGame();
         }
         if (checkTrailCollision(player2)) {
-            // Handle collision for player 2
             endGame();
         }
     }
@@ -132,14 +128,14 @@
         alert('Game Over!');
         // Reset game
         player1 = {
-            x: 50,
+            x: 100,
             y: canvas.height / 2,
             direction: 'right',
             trail: [],
             color: 'blue'
         };
         player2 = {
-            x: canvas.width - 50,
+            x: canvas.width - 100,
             y: canvas.height / 2,
             direction: 'left',
             trail: [],
@@ -150,33 +146,33 @@
     // Keyboard controls
     document.addEventListener('keydown', function (event) {
         const key = event.key;
-        // Player 1 controls (Arrow keys)
+        // Player 1 controls (WASD keys)
         switch (key) {
-            case 'ArrowUp':
+            case 'w':
                 player1.direction = 'up';
                 break;
-            case 'ArrowDown':
+            case 's':
                 player1.direction = 'down';
                 break;
-            case 'ArrowLeft':
+            case 'a':
                 player1.direction = 'left';
                 break;
-            case 'ArrowRight':
+            case 'd':
                 player1.direction = 'right';
                 break;
         }
-        // Player 2 controls (WASD keys)
+        // Player 2 controls (Arrow keys)
         switch (key) {
-            case 'w':
+            case 'ArrowUp':
                 player2.direction = 'up';
                 break;
-            case 's':
+            case 'ArrowDown':
                 player2.direction = 'down';
                 break;
-            case 'a':
+            case 'ArrowLeft':
                 player2.direction = 'left';
                 break;
-            case 'd':
+            case 'ArrowRight':
                 player2.direction = 'right';
                 break;
         }

@@ -1,4 +1,190 @@
-<h1>HELLO</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tron Game</title>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    canvas {
+        border: 2px solid black;
+    }
+</style>
+</head>
+<body>
+<canvas id="gameCanvas" width="600" height="400"></canvas>
 
-<p>Doctor who </p>
-<p>i like <b>stuff</b> and <i>minecraft</i></p>
+<script>
+    // Get the canvas and context
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Initial positions and directions of players
+    let player1 = {
+        x: 50,
+        y: canvas.height / 2,
+        direction: 'right',
+        trail: [],
+        color: 'blue'
+    };
+    let player2 = {
+        x: canvas.width - 50,
+        y: canvas.height / 2,
+        direction: 'left',
+        trail: [],
+        color: 'red'
+    };
+
+    // Game loop
+    function gameLoop() {
+        movePlayers();
+        checkCollisions();
+        draw();
+    }
+
+    function movePlayers() {
+        movePlayer(player1);
+        movePlayer(player2);
+    }
+
+    function movePlayer(player) {
+        // Update player's position based on direction
+        switch (player.direction) {
+            case 'up':
+                player.y -= 5;
+                break;
+            case 'down':
+                player.y += 5;
+                break;
+            case 'left':
+                player.x -= 5;
+                break;
+            case 'right':
+                player.x += 5;
+                break;
+        }
+        // Add current position to trail
+        player.trail.push({ x: player.x, y: player.y });
+    }
+
+    function checkCollisions() {
+        // Check collisions with walls
+        if (player1.x <= 0 || player1.x >= canvas.width || player1.y <= 0 || player1.y >= canvas.height) {
+            // Handle collision for player 1
+            endGame();
+        }
+        if (player2.x <= 0 || player2.x >= canvas.width || player2.y <= 0 || player2.y >= canvas.height) {
+            // Handle collision for player 2
+            endGame();
+        }
+        // Check collisions with trails
+        if (checkTrailCollision(player1)) {
+            // Handle collision for player 1
+            endGame();
+        }
+        if (checkTrailCollision(player2)) {
+            // Handle collision for player 2
+            endGame();
+        }
+    }
+
+    function checkTrailCollision(player) {
+        // Check if player's trail overlaps with current position
+        const currentPos = { x: player.x, y: player.y };
+        for (let i = 0; i < player.trail.length; i++) {
+            if (player.trail[i].x === currentPos.x && player.trail[i].y === currentPos.y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function draw() {
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw player 1
+        ctx.fillStyle = player1.color;
+        ctx.fillRect(player1.x - 2, player1.y - 2, 4, 4);
+        drawTrail(player1);
+
+        // Draw player 2
+        ctx.fillStyle = player2.color;
+        ctx.fillRect(player2.x - 2, player2.y - 2, 4, 4);
+        drawTrail(player2);
+    }
+
+    function drawTrail(player) {
+        // Draw the trail of the player
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        for (let i = 0; i < player.trail.length; i++) {
+            ctx.fillRect(player.trail[i].x - 2, player.trail[i].y - 2, 4, 4);
+        }
+    }
+
+    function endGame() {
+        alert('Game Over!');
+        // Reset game
+        player1 = {
+            x: 50,
+            y: canvas.height / 2,
+            direction: 'right',
+            trail: [],
+            color: 'blue'
+        };
+        player2 = {
+            x: canvas.width - 50,
+            y: canvas.height / 2,
+            direction: 'left',
+            trail: [],
+            color: 'red'
+        };
+    }
+
+    // Keyboard controls
+    document.addEventListener('keydown', function (event) {
+        const key = event.key;
+        // Player 1 controls (Arrow keys)
+        switch (key) {
+            case 'ArrowUp':
+                player1.direction = 'up';
+                break;
+            case 'ArrowDown':
+                player1.direction = 'down';
+                break;
+            case 'ArrowLeft':
+                player1.direction = 'left';
+                break;
+            case 'ArrowRight':
+                player1.direction = 'right';
+                break;
+        }
+        // Player 2 controls (WASD keys)
+        switch (key) {
+            case 'w':
+                player2.direction = 'up';
+                break;
+            case 's':
+                player2.direction = 'down';
+                break;
+            case 'a':
+                player2.direction = 'left';
+                break;
+            case 'd':
+                player2.direction = 'right';
+                break;
+        }
+    });
+
+    // Start the game loop
+    setInterval(gameLoop, 1000 / 30); // 30 FPS
+
+</script>
+</body>
+</html>

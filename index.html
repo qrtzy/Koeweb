@@ -11,14 +11,38 @@
         align-items: center;
         height: 100vh;
         margin: 0;
+        font-family: Arial, sans-serif;
     }
     canvas {
         border: 2px solid black;
+    }
+    #gameOverScreen {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    #gameOverScreen h1 {
+        font-size: 3em;
+        margin-bottom: 20px;
     }
 </style>
 </head>
 <body>
 <canvas id="gameCanvas" width="600" height="400"></canvas>
+
+<div id="gameOverScreen">
+    <h1>Game Over!</h1>
+    <p>Time elapsed: <span id="score">0</span> milliseconds</p>
+    <button id="restartButton">Restart</button>
+</div>
 
 <script>
     // Get the canvas and context
@@ -27,25 +51,32 @@
 
     // Initial positions and directions of players
     let player1 = {
-        x: 100,
+        x: 50,
         y: canvas.height / 2,
         direction: 'right',
         trail: [],
         color: 'blue'
     };
     let player2 = {
-        x: canvas.width - 100,
+        x: canvas.width - 50,
         y: canvas.height / 2,
         direction: 'left',
         trail: [],
         color: 'red'
     };
 
+    let gameOver = false;
+    let startTime = 0;
+    let scoreInterval;
+
     // Game loop
     function gameLoop() {
-        movePlayers();
-        checkCollisions();
-        draw();
+        if (!gameOver) {
+            movePlayers();
+            checkCollisions();
+            draw();
+            updateScore();
+        }
     }
 
     function movePlayers() {
@@ -125,61 +156,54 @@
     }
 
     function endGame() {
-        alert('Game Over!');
-        // Reset game
+        gameOver = true;
+        clearInterval(scoreInterval);
+        document.getElementById('gameOverScreen').style.display = 'flex';
+        calculateScore();
+    }
+
+    function calculateScore() {
+        const endTime = Date.now();
+        const elapsed = endTime - startTime;
+        document.getElementById('score').textContent = elapsed + ' milliseconds';
+    }
+
+    function updateScore() {
+        const currentTime = Date.now();
+        const elapsed = currentTime - startTime;
+        document.getElementById('score').textContent = elapsed + ' milliseconds';
+    }
+
+    function restartGame() {
+        gameOver = false;
         player1 = {
-            x: 100,
+            x: 50,
             y: canvas.height / 2,
             direction: 'right',
             trail: [],
             color: 'blue'
         };
         player2 = {
-            x: canvas.width - 100,
+            x: canvas.width - 50,
             y: canvas.height / 2,
             direction: 'left',
             trail: [],
             color: 'red'
         };
+        startTime = Date.now();
+        scoreInterval = setInterval(updateScore, 100); // Update score every 100 milliseconds
+        document.getElementById('gameOverScreen').style.display = 'none';
     }
 
-    // Keyboard controls
-    document.addEventListener('keydown', function (event) {
-        const key = event.key;
-        // Player 1 controls (WASD keys)
-        switch (key) {
-            case 'w':
-                player1.direction = 'up';
-                break;
-            case 's':
-                player1.direction = 'down';
-                break;
-            case 'a':
-                player1.direction = 'left';
-                break;
-            case 'd':
-                player1.direction = 'right';
-                break;
-        }
-        // Player 2 controls (Arrow keys)
-        switch (key) {
-            case 'ArrowUp':
-                player2.direction = 'up';
-                break;
-            case 'ArrowDown':
-                player2.direction = 'down';
-                break;
-            case 'ArrowLeft':
-                player2.direction = 'left';
-                break;
-            case 'ArrowRight':
-                player2.direction = 'right';
-                break;
-        }
-    });
-
     // Start the game loop
+    startTime = Date.now();
+    scoreInterval = setInterval(updateScore, 100); // Update score every 100 milliseconds
     setInterval(gameLoop, 1000 / 30); // 30 FPS
+
+    // Event listener for restart button
+    document.getElementById('restartButton').addEventListener('click', function() {
+        restartGame();
+    });
 
 </script>
 </body>

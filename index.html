@@ -105,18 +105,11 @@
     }
 
     function checkCollisions() {
-        // Check collisions with walls
-        if (player1.x <= 0 || player1.x >= canvas.width || player1.y <= 0 || player1.y >= canvas.height) {
+        // Check collisions with walls and trails
+        if (player1.x <= 0 || player1.x >= canvas.width || player1.y <= 0 || player1.y >= canvas.height || checkTrailCollision(player1)) {
             endGame();
         }
-        if (player2.x <= 0 || player2.x >= canvas.width || player2.y <= 0 || player2.y >= canvas.height) {
-            endGame();
-        }
-        // Check collisions with trails
-        if (checkTrailCollision(player1)) {
-            endGame();
-        }
-        if (checkTrailCollision(player2)) {
+        if (player2.x <= 0 || player2.x >= canvas.width || player2.y <= 0 || player2.y >= canvas.height || checkTrailCollision(player2)) {
             endGame();
         }
     }
@@ -158,8 +151,10 @@
     function endGame() {
         gameOver = true;
         clearInterval(scoreInterval);
-        document.getElementById('gameOverScreen').style.display = 'flex';
-        calculateScore();
+        setTimeout(() => {
+            document.getElementById('gameOverScreen').style.display = 'flex';
+            calculateScore();
+        }, 500); // Delay game over screen by 500 milliseconds
     }
 
     function calculateScore() {
